@@ -151,6 +151,13 @@ STATICFILES_DIRS = [
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 
+# data location
+CLINK_LAT = '47.5943344'       # centurylink field lat
+CLINK_LON = '-122.3372723'     # clink lon
+RADIUS = '1609.34'              # 1 mile in meters
+DATASET_ID = 'pu5n-trf4'        # v2.1 api for Seattle Police Department 911 Incident Response
+SOURCE_DOMAIN = 'data.seattle.gov'
+
 # socrata api
 assert 'SOCRATA_APP_TOKEN' in os.environ, 'Set SOCRATA_APP_TOKEN in your .env file!'
 SOCRATA_APP_TOKEN = os.environ['SOCRATA_APP_TOKEN']
