@@ -149,3 +149,11 @@ STATICFILES_DIRS = [
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+
+# socrata api
+assert 'SOCRATA_APP_TOKEN' in os.environ, 'Set SOCRATA_APP_TOKEN in your .env file!'
+SOCRATA_APP_TOKEN = os.environ['SOCRATA_APP_TOKEN']
+
+assert 'SOCRATA_SECRET_TOKEN' in os.environ, 'Set SOCRATA_SECRET_TOKEN in your .env file!'
+SOCRATA_SECRET_TOKEN = os.environ['SOCRATA_SECRET_TOKEN']
