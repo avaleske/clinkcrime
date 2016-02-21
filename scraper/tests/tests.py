@@ -1,7 +1,7 @@
 from datetime import datetime
 import pytz
 from django.test import TestCase
-from scraper.eventlist_scraper import EventlistScraper
+from scraper import EventlistScraper
 
 # Create your tests here.
 class EventlistScraperTests(TestCase):

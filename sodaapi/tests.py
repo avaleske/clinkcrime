@@ -13,8 +13,7 @@ class ApiTests(TestCase):
         self.assertListEqual(
             ['cad_cdw_id', 'event_clearance_date', 'event_clearance_group'],
             data[1],
-            msg="Response list did not have the expected columns"
-            )
+            msg="Response list did not have the expected columns")
 
 
 
