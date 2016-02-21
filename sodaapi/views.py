@@ -1,3 +1,16 @@
-from django.shortcuts import render
+from django.http import HttpResponse
+from sodaapi import api
+from django.views.defaults import server_error
+import csv
 
-# Create your views here.
+def get_all_crime(request):
+    response = HttpResponse(content_type='text/csv')
+    response['content-Disposition'] = 'attachment; filename="all_crime.csv"'
+
+    writer = csv.writer(response)
+    try:
+        writer.writerows(api.get_crime_data())
+    except:
+        server_error(request)  # this would've happened anyway, but we'll call it explicitly
+
+    return response
