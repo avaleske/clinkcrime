@@ -1,2 +1,1 @@
-from EventlistScraper import EventlistScraper
 from ScraperRunner import ScraperRunner

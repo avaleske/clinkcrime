@@ -10,3 +10,4 @@ This readme is a work in progress; right now it just has some notes for later wh
 - some url escaping happening, but the parser still works fine
 - the scraping is fragile, which is why I've isolated it, but I'd want it much more robust before trusting it in production
 - event data is coming back as utc, crime data as local time
+- named tuples to make it more readable

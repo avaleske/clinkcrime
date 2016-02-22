@@ -1,4 +1,3 @@
-import time
 from datetime import datetime
 from itertools import imap, islice
 from sodapy import Socrata
@@ -93,4 +92,5 @@ def _convert_grouped_row(row):
 def _convert_date_to_js(date_string):
     dt = pytz.timezone('America/Los_Angeles').localize(
         datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%S.000'), is_dst=True)
-    return int(time.mktime(dt.timetuple())) * 1000
+    js_dt = (dt - datetime(1970, 1, 1, tzinfo=pytz.utc)).total_seconds() * 1000
+    return js_dt

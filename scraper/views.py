@@ -8,12 +8,11 @@ from django.views.decorators.cache import cache_page
 def get_all_events(request):
     response = HttpResponse(content_type='text/csv')
     response['content-Disposition'] = 'attachment; filename="all_events.csv"'
-
     writer = csv.writer(response)
-    try:
-        sr = ScraperRunner()
-        writer.writerows(sr.scrape_events())
-    except:
-        server_error(request)  # this would've happened anyway, but we'll call it explicitly
+    server_error(request)
+
+    # these could blow up, but that'll just return a 500, which is good for now
+    sr = ScraperRunner()
+    writer.writerows(sr.scrape_events())
 
     return response
