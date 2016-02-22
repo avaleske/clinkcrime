@@ -16,3 +16,16 @@ def get_all_crime(request):
         server_error(request)  # this would've happened anyway, but we'll call it explicitly
 
     return response
+
+@cache_page(60 * 15)
+def get_grouped_crime(request):
+    response = HttpResponse(content_type='text/csv')
+    response['content-Disposition'] = 'attachment; filename="grouped_crime.csv"'
+
+    writer = csv.writer(response)
+    try:
+        writer.writerows(api.get_grouped_crime_data())
+    except:
+        server_error(request)  # this would've happened anyway, but we'll call it explicitly
+
+    return response

@@ -7,7 +7,7 @@ from django.views.decorators.cache import cache_page
 @cache_page(60 * 15)
 def get_all_events(request):
     response = HttpResponse(content_type='text/csv')
-    response['content-Disposition'] = 'attachment; filename="all_crime.csv"'
+    response['content-Disposition'] = 'attachment; filename="all_events.csv"'
 
     writer = csv.writer(response)
     try:
