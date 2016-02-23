@@ -46,9 +46,9 @@ def get_grouped_crime_data():
     # call crime data api
     client = Socrata(settings.SOURCE_DOMAIN, settings.SOCRATA_APP_TOKEN)
 
-    limit = 20000
+    limit = 1000
     offset = 0
-    tries = 10
+    tries = 1
 
     # return the headers
     yield ['count', 'date', 'event_clearance_group']

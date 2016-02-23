@@ -1,6 +1,5 @@
 from django.http import HttpResponse
 from sodaapi import api
-from django.views.defaults import server_error
 import csv
 from django.views.decorators.cache import cache_page
 

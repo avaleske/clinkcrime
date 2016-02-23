@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ClinkCrime</title>
+    <script src="//d3js.org/d3.v3.js" charset="utf-8"></script>
+    <style>
+      body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        margin: auto;
+        position: relative;
+        width: 960px;
+      }
+
+      text {
+        font: 10px sans-serif;
+      }
+
+      .axis path,
+      .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      ClinkCrime
+    </div>
+    <div class="chart"></div>
+
+    <script type="text/javascript">
+      document.addEventListener("DOMContentLoaded", function(event) {
+
+        // Set our margins
+        var margin = {
+            top: 20,
+            right: 20,
+            bottom: 50,
+            left: 60
+        };
+        var width = 700 - margin.left - margin.right;
+        var height = 350 - margin.top - margin.bottom;
+
+        var svg = d3.select(".chart").append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        d3.csv('/api/grouped_crime', type, function(error, crime_csv){
+          if (error) throw error // todo: handle a server error
+
+          // define domains
+          var x_domain = [new Date(1450569600000),
+                            d3.max(crime_csv, function(d) {return d.date; })];
+          var y_domain = [0, 100];
+
+          // define scales
+          var x = d3.time.scale()
+                  .domain(x_domain)
+                  .rangeRound([0, width]);
+
+          var y = d3.scale.linear()
+                    .domain(y_domain)
+                    .range([height, 0]);
+
+          // define axis
+          var xAxis = d3.svg.axis()
+                        .orient("bottom")
+                        .scale(x)
+                        .ticks(d3.time.days(x_domain[0], x_domain[1]).length)
+                        .tickFormat(d3.time.format("%d %b"));
+
+          var yAxis = d3.svg.axis()
+                        .orient("left")
+                        .scale(y);
+
+          // append axis
+          svg.append("g")
+              .attr("class", "x axis")
+              .attr("transform", "translate(0,"+ height + ")")
+            .call(xAxis)
+              .selectAll("text")
+              .attr("y", 0)
+              .attr("x", -40)
+              .attr("dy", ".35em")
+              .attr("transform", "rotate(-90)")
+              .style("text-anchor", "start");
+
+          // group data by days
+          var data = d3.nest()
+            .key(function(d) { return d.date; })
+            .sortKeys(function(a,b){ return new Date(a)-new Date(b); })
+            // and rearrange rows to be key value pairs of {group: count}
+            .rollup(function(day_group) {
+              obj = {};
+              day_group.forEach(function(row, i, arr){
+                obj[row.event_clearance_group] = row.count;
+              });
+              return obj;
+            })
+            .entries(crime_csv);
+
+          // get unique crime types
+          var crime_catagories = d3.keys(d3.map(crime_csv, function(d) {
+                                            return d.event_clearance_group;
+                                          })._).sort();
+          // get colors
+          var color = d3.scale.linear()
+            //.domain([0, 36])
+            .domain([0, crime_catagories.length - 1])
+            .range(["#98abc5", "#ff8c00"]);
+
+          // add stack info. todo: combine this with the rollup function above
+          data.forEach(function(d) {
+            var y0 = 0;
+            d.catagories = crime_catagories.map(function(catagory) {
+              var y0_old = y0;
+              y0 += typeof d.values[catagory] !== 'undefined' ? d.values[catagory] : 0;
+              return {catagory: catagory, y0: y0_old, y1: y0};
+            });
+            d.total = d.catagories[d.catagories.length - 1].y1;
+          });
+
+          // enter day groups and rectangle elements
+          var day = svg.selectAll(".day")
+              .data(data)
+            .enter().append("g")
+              .attr("class", "g")
+              .attr("transform", function(d) { return "translate(" + x(new Date(d.key)) + ",0)"; })
+
+          day.selectAll("rect")
+              .data(function(d) { return d.catagories; })
+            .enter().append("rect")
+              .attr("width", width/data.length - 5 )
+              .attr("y", function(d) { return y(d.y1); })
+              .attr("height", function(d) { return y(d.y0) - y(d.y1); })
+              .style("fill", function(d) { return color(crime_catagories.indexOf(d.catagory)); });
+
+          // copy pasta for now
+          var legend = svg.selectAll(".legend")
+              .data(crime_catagories)
+            .enter().append("g")
+              .attr("class", "legend")
+              .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+          legend.append("rect")
+              .attr("x", width - 18)
+              .attr("width", 18)
+              .attr("height", 18)
+              .style("fill", function(d) { return color(crime_catagories.indexOf(d)); });
+
+          legend.append("text")
+              .attr("x", width - 24)
+              .attr("y", 9)
+              .attr("dy", ".35em")
+              .style("text-anchor", "end")
+              .text(function(d) { return d; });
+
+
+          var extra = 5;
+        });
+
+
+
+        function type(d) {
+          d.count = parseInt(d.count) // coerce to number
+          d.date = new Date(parseInt(d.date))
+          d.event_clearance_group = d.event_clearance_group
+          return d
+        }
+      });
+    </script>
+  </body>
+</html>
