@@ -24,6 +24,7 @@ I approached this as if it were a proof-of-concept project, not a production app
 - I'm assuming that the crime datasource is giving me data in Seattle time. The API docs indicated to assume times were local.
 - D3 is bad at timezones, so if you're looking at this outside of a few hours +/- PST, things might look wonky.
 - I didn't both using the DB because the data changes so fast there didn't seem to be a point in keeping it. Also, I didn't want to write DB code.
+- While you can't move the end date into the future, you can move the start date and the end date past each other, which is obviously not a thing that makes sense to allow but I didn't prevent yet.
 
 ## Installation
 Ok, so after all that you want to install this? Alright:
