@@ -14,7 +14,7 @@ def get_all_crime(request):
 
     return response
 
-@cache_page(60 * 15)
+# @cache_page(60 * 15) # don't want to cache every possible start/end date combo...
 def get_grouped_crime(request, start, end):
     response = HttpResponse(content_type='text/csv')
     response['content-Disposition'] = 'attachment; filename="grouped_crime.csv"'
