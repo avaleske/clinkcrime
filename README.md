@@ -1,5 +1,6 @@
 # ClinkCrime
 Displays events CenturyLink Field is hosting, as well as crimes that occured, on any given day.
+Running at [clinkcrime.herokuapp.com](clinkcrime.herokuapp.com).
 
 Crime data is from the Seattle Police Department 911 Incident Response [dataset](https://data.seattle.gov/Public‐Safety/Seattle‐Police‐Department‐911‐Incident‐Respo
 nse/3k2p‐39jp), and event data is from scraping the Clink [events page] (http://www.trumba.com/calendars/centurylink-field-events-calendar).
