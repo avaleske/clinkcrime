@@ -12,6 +12,7 @@ I approached this as if it were a proof-of-concept project, not a production app
 ## Caveats / Notes
 - I'm using the SODA v2.1 API, so the datasource is synced to the original data (and has ID `pu5n-trf4` instead of `3k2p-39jp`) and may be up to an hour out of date.
 - It's not at all responsive. It's possible to make D3 charts responsive, but I didn't get to it. It loads on mobile, everything's just tiny.
+- This would be terrible for a colorblind person. There's reds and greens near each other and it would just be awful.
 - It works in Edge, but not really in IE. This may have been because my VM was really slow, but it's hard to tell.
 - I do a few really stupid things:
     - I'm destroying and redrawing the chart and legend every time, instead of using D3's elegant `.update()` functions, because I still need to figure out how to use `.update()` when pulling data from `d3.csv()`. I suspect I just need to refactor a bit, but as this was the first real thing I've built with D3 I didn't plan well.
