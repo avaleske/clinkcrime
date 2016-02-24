@@ -1,8 +1,10 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <title>ClinkCrime</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script src="//d3js.org/d3.v3.js" charset="utf-8"></script>
     <style>
       body {
@@ -47,6 +49,52 @@
         padding-left: 15px;
       }
 
+      #throbber {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url({% static 'img/BrandedSpinner.gif' %});
+        background-position: 50% 20%;
+        background-repeat: no-repeat;
+        z-index: 100;
+      }
+
+      /*legend*/
+      .legend {
+        font-size: 10px;
+        width: 400px;
+        list-style: none;
+      }
+
+      .legend-item {
+        margin: 5px;
+      }
+
+      .legend-label, .legend-color, .legend-count {
+        margin: auto 5px;
+        vertical-align: middle;
+      }
+
+      .legend-label {
+        width: 170px;
+        text-align: right;
+        display: inline-block;
+        text-transform: capitalize;
+      }
+
+      .legend-color {
+        width: 15px;
+        height: 15px;
+        display: inline-block;
+      }
+
+      .legend-count {
+        width: 30px;
+        text-align: left;
+      }
+
       /*svg things*/
 
       text {
@@ -66,12 +114,14 @@
 
       .event-rect {
         fill: #000;
-        opacity: 0.25;
+        opacity: 0.2;
       }
 
     </style>
   </head>
   <body>
+    <div id="throbber">
+    </div>
     <div class="main-col">
       <h1>
         ClinkCrime
@@ -87,12 +137,20 @@
       </div>
 
       <div class="chart"></div>
-      <div class="legend"></div>
+      <div class="legend_wrapper">
+        <ul class="legend">
+        </ul>
+      </div>
     </div>
 
 
     <script type="text/javascript">
-      document.addEventListener("DOMContentLoaded", function(event) {
+      $(document).ready(function(event) {
+
+        // hide the throbber at the end
+        $('#throbber').on('chart_complete', function() {
+          $(this).hide();
+        });
 
         // Set our margins for the chart
         var margin = {
@@ -111,20 +169,20 @@
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // set margins for the legend
-        var legend_margin = {
-            top: 20,
-            right: 20,
-            bottom: 20,
-            left: 20
-        };
-        var legend_width = 280 - legend_margin.left - legend_margin.right;
-        var legend_height = 800 - legend_margin.top - legend_margin.bottom;
-
-        var legend_svg = d3.select(".legend").append("svg")
-          .attr("width", legend_width + legend_margin.left + legend_margin.right)
-          .attr("height", legend_height + legend_margin.top + legend_margin.bottom)
-          .append("g")
-          .attr("transform", "translate(" + legend_margin.left + "," + legend_margin.top + ")");
+        // var legend_margin = {
+        //     top: 20,
+        //     right: 20,
+        //     bottom: 20,
+        //     left: 20
+        // };
+        // var legend_width = 320 - legend_margin.left - legend_margin.right;
+        // var legend_height = 800 - legend_margin.top - legend_margin.bottom;
+        //
+        // var legend_svg = d3.select(".legend").append("svg")
+        //   .attr("width", legend_width + legend_margin.left + legend_margin.right)
+        //   .attr("height", legend_height + legend_margin.top + legend_margin.bottom)
+        //   .append("g")
+        //   .attr("transform", "translate(" + legend_margin.left + "," + legend_margin.top + ")");
 
         // get crime data
         d3.csv('/api/grouped_crime', type, function(error, crime_csv){
@@ -214,12 +272,60 @@
               .style("text-anchor", "end")
               .text("Crime Events");
 
+          // for the legend
+          // var legend = legend_svg.selectAll(".legend-item")
+          //     .data(crime_catagories.slice().reverse())
+          //   .enter().append("g")
+          //     .attr("class", "legend-item")
+          //     .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+          //
+          // legend.append("rect")
+          //     .attr("x", legend_width - 58)
+          //     .attr("width", 18)
+          //     .attr("height", 18)
+          //     .style("fill", function(d) { return color(d); });
+          //
+          // legend.append("text")
+          //     .attr("class", "legend-label")
+          //     .attr("x", legend_width - 64)
+          //     .attr("y", 9)
+          //     .attr("dy", ".35em")
+          //     .style("text-anchor", "end")
+          //     .text(function(d) { return d; });
+          //
+          // count = legend.append("text")
+          //   .attr("class", "count")
+          //   .attr("x", legend_width - 36)
+          //   .attr("y", 9)
+          //   .attr("dy", ".35em")
+          //   .style("text-anchor", "start")
+          //   .text(function(d) { return '7'; });
+
           // create day groups
           var day = svg.selectAll(".day")
               .data(data, function(d) { return d.key; })
             .enter().append("g")
-              .attr("class", "g")
-              .attr("transform", function(d) { return "translate(" + (x(new Date(d.key)) - (width/data.length)/2) + ",0)"; })
+              .attr("class", "day")
+              .attr("transform", function(d) {
+                return "translate(" + (x(new Date(d.key)) - (width/data.length)/2) + ",0)"; })
+              .on("click", function(d) {
+                // destroy the legend and rebuild it
+                // yes, I know there are better ways to do this
+                // yes, I should've used angular or react in this project...
+                var $legend = $('.legend');
+                $legend.empty();
+                d.catagories.forEach(function(c) {
+                  $li = $('<li>').addClass('legend-item');
+                  $li.append(
+                      $('<span>').text(c.catagory.toLowerCase()).addClass('legend-label')
+                    ).append(
+                      $('<span>').css('background-color', color(c.catagory)).addClass('legend-color')
+                    ).append(
+                      $('<span>').text(c.y1-c.y0).addClass('legend-count')
+                    );
+                  $legend.prepend($li);
+                });
+              });
 
           // enter rectangle elements
           day.selectAll("rect")
@@ -229,26 +335,6 @@
               .attr("y", function(d) { return y(d.y1); })
               .attr("height", function(d) { return y(d.y0) - y(d.y1); })
               .style("fill", function(d) { return color(d.catagory); });
-
-          // for the legend
-          var legend = legend_svg.selectAll(".legend-item")
-              .data(crime_catagories.slice().reverse())
-            .enter().append("g")
-              .attr("class", "legend-item")
-              .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-          legend.append("rect")
-              .attr("x", legend_width - 18)
-              .attr("width", 18)
-              .attr("height", 18)
-              .style("fill", function(d) { return color(d); });
-
-          legend.append("text")
-              .attr("x", legend_width - 24)
-              .attr("y", 9)
-              .attr("dy", ".35em")
-              .style("text-anchor", "end")
-              .text(function(d) { return d; });
 
           // get event data and process it
           // todo refactor so stuff isn't nesting forever
@@ -261,18 +347,19 @@
             });
             event_data.sort(function(a,b){ return a.event_datetime - b.event_datetime; });
 
-            var event_rect = day
-              .data(event_data, function(d) { return d.key; })
-              .append("rect")
-              .attr("class", "event-rect")
-              .attr("width", width/data.length)
-              .attr("y", 0)
-              .attr("height", height + margin.bottom + margin.top);
+            // create event day groups
+            var event_day = svg.selectAll(".event-rect")
+                .data(event_data, function(d) { return d.key; })
+              .enter().append("rect")
+                .attr("class", "event-rect")
+                .attr("width", width/data.length)
+                .attr("y", 0)
+                .attr("height", height + margin.bottom + margin.top)
+                .attr("transform", function(d) {
+                  return "translate(" + (x(new Date(d.key)) - (width/data.length)/2) + ",0)"; })
 
-            var here = 5;
+            $('#throbber').trigger('chart_complete')
           });
-
-          var extra = 5;
         });
 
         function type(d) {
@@ -308,7 +395,7 @@
           '#2ca02c',
           '#c5b0d5',
           '#8c564b',
-          'bcbd22',
+          '#bcbd22',
           '#c49c94',
           '#e377c2',
           '#06332c',
