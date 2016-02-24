@@ -237,8 +237,8 @@ $(document).on('draw', function(event) {
       event_day.append("rect")
           .attr("class", "event-rect")
           .attr("width", width/data.length)
-          .attr("y", 0 - margin.top + 10)
-          .attr("height", height + margin.bottom + margin.top -  10);
+          .attr("y", 0 - margin.top)
+          .attr("height", height + margin.bottom + margin.top);
 
       // and event labels
       event_day.append("text")

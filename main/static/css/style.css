@@ -1,6 +1,6 @@
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  margin: 20px auto;
+  margin: 40px auto;
 }
 
 h1 {
@@ -28,8 +28,23 @@ h1 {
   font-family: "Nobile", Helvetica, Arial, sans-serif;
 }
 
-.line-through {
-  text-decoration: line-through;
+.strikethrough {
+  position: relative;
+}
+.strikethrough:before {
+  position: absolute;
+  content: "";
+  left: 0;
+  top: 50%;
+  right: 0;
+  border-top: 2px solid;
+  border-color: inherit;
+
+  -webkit-transform:rotate(-10deg);
+  -moz-transform:rotate(-10deg);
+  -ms-transform:rotate(-10deg);
+  -o-transform:rotate(-10deg);
+  transform:rotate(-10deg);
 }
 
 .wrapper {
@@ -123,6 +138,10 @@ h1 {
 }
 
 /*svg things*/
+
+svg {
+  margin: 20px 0px
+}
 
 text {
   font: 10px sans-serif;
