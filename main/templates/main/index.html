@@ -56,7 +56,7 @@
         width: 100%;
         height: 100%;
         background-image: url({% static 'img/BrandedSpinner.gif' %});
-        background-position: 50% 20%;
+        background-position: 50% 40%;
         background-repeat: no-repeat;
         z-index: 100;
       }
@@ -95,6 +95,26 @@
         text-align: left;
       }
 
+      /*buttons*/
+      .start .end {
+        display:block;
+        float:left;
+      }
+
+      .start-buttons {
+        float: left;
+        width: 200px;
+      }
+
+      .end-buttons {
+        float: right;
+        width: 200px;
+      }
+
+      .end {
+        float:right;
+      }
+
       /*svg things*/
 
       text {
@@ -131,12 +151,21 @@
       </div>
       <div class="alert-info">
         <em>Hey there!</em> <br>
-        This is very much a demo app, and could still use <span class="line-through">a bit</span> a lot of polish.
+        This is very much a demo app, and could still use <span class="line-through">a bit</span> a lot of work.
         For a list of known issues, including colorblind friendliness and responsiveness,
         checkout out the Readme on <a href="//github.com/avaleske/clinkcrime">GitHub</a>.
       </div>
 
-      <div class="chart"></div>
+      <div class="chart">
+        <div class="start-buttons">
+          <input type="button" name="start-back" class="start back" value="Move Start 1 Month Backward">
+          <input type="button" name="start-forward" class="start forward" value="Move Start 1 Month Forward">
+        </div>
+        <div class="end-buttons">
+          <input type="button" name="end-back" class="end back" value="Move End 1 Month Backward">
+          <input type="button" name="end-forward" class="end forward" value="Move End 1 Month Forward">
+        </div>
+</div>
       <div class="legend_wrapper">
         <ul class="legend">
         </ul>
@@ -145,7 +174,55 @@
 
 
     <script type="text/javascript">
+      var x_domain = [];
+
       $(document).ready(function(event) {
+        // initial x domain
+        var now = new Date();
+        x_domain = [
+            new Date(now.getFullYear(), now.getMonth() - 1, 1).getTime(),
+            now.getTime()];
+        $(this).trigger('draw');
+      });
+
+      $('.start.back').click(function(event) {
+        var start = new Date(x_domain[0]);
+        x_domain[0] = new Date(start.getFullYear(), start.getMonth() - 1, 1).getTime();
+        $(document).trigger('draw');
+      });
+
+      $('.end.back').click(function(event) {
+        var end = new Date(x_domain[1]);
+        x_domain[1] = new Date(end.getFullYear(), end.getMonth(), -1).getTime();
+        $(document).trigger('draw');
+      });
+
+      $('.start.forward').click(function(event) {
+        var now = new Date();
+        var start = new Date(x_domain[0]);
+        x_domain[0] = Math.min(
+          new Date(start.getFullYear(), start.getMonth() + 1, 1).getTime(),
+          new Date(now.getFullYear(), now.getMonth(), 1).getTime()
+        );
+        $(document).trigger('draw');
+      });
+
+      $('.end.forward').click(function(event) {
+        var now = new Date();
+        var end = new Date(x_domain[0]);
+        x_domain[1] = Math.max(
+          new Date(end.getFullYear(), end.getMonth() + 2, -1).getTime(),
+          now.getTime()
+        );
+        $(document).trigger('draw');
+      });
+
+      $(document).on('draw', function(event) {
+        // I'm not proud of this
+        // but I don't have time to refactor this so I can
+        // easily do proper d3 updates
+        // so we're going nuclear and rebuilding every time...
+        $('svg').remove();
 
         // hide the throbber at the end
         $('#throbber').on('chart_complete', function() {
@@ -153,12 +230,6 @@
         });
 
         $('#throbber').show();
-
-        // initial x domain
-        var now = new Date()
-        var x_domain = [
-            new Date(now.getFullYear(), now.getMonth() - 1, 1).getTime(),
-            now.getTime()];
 
         // Set our margins for the chart
         var margin = {
