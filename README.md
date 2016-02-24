@@ -5,12 +5,12 @@ Running at [clinkcrime.herokuapp.com](clinkcrime.herokuapp.com).
 Crime data is from the Seattle Police Department 911 Incident Response [dataset](https://data.seattle.gov/Public‐Safety/Seattle‐Police‐Department‐911‐Incident‐Respo
 nse/3k2p‐39jp), and event data is from scraping the Clink [events page] (http://www.trumba.com/calendars/centurylink-field-events-calendar).
 
-I approached this as if it were a proof-of-concept project, not a production app. It's not nearly production ready.
+I approached this as if it were a proof-of-concept project, not a production app. It's not nearly production ready. That said, learning D3 and the Socrata API were a lot of fun.
 
 <img src="screenshot.png?raw=true" width="600" >
 
 ## Caveats / Notes
-- I'm using the SODA v2.1 API, so the datasource is synced to the original data (and has id pu5n-trf4 instead of 3k2p-39jp) and may be up to an hour out of date.
+- I'm using the SODA v2.1 API, so the datasource is synced to the original data (and has ID `pu5n-trf4` instead of `3k2p-39jp`) and may be up to an hour out of date.
 - It's not at all responsive. It's possible to make D3 charts responsive, but I didn't get to it. It loads on mobile, everything's just tiny.
 - It works in Edge, but not really in IE. This may have been because my VM was really slow, but it's hard to tell.
 - I do a few really stupid things:
