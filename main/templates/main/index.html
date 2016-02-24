@@ -152,6 +152,14 @@
           $(this).hide();
         });
 
+        $('#throbber').show();
+
+        // initial x domain
+        var now = new Date()
+        var x_domain = [
+            new Date(now.getFullYear(), now.getMonth() - 1, 1).getTime(),
+            now.getTime()];
+
         // Set our margins for the chart
         var margin = {
             top: 20,
@@ -169,7 +177,10 @@
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // get crime data
-        d3.csv('/api/grouped_crime', type, function(error, crime_csv){
+        d3.csv('/api/grouped_crime/start/' + x_domain[0] + '/end/' + x_domain[1],
+          type,
+          function(error, crime_csv){
+
           if (error) throw error // todo: handle a server error
 
           // group data by days

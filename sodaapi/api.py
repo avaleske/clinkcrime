@@ -42,13 +42,21 @@ def get_crime_data():
     client.close()
 
 
-def get_grouped_crime_data():
+def get_grouped_crime_data(start, end):
+    seattle_time = pytz.timezone('America/Los_Angeles')
+
+    start_date = pytz.utc.localize(datetime.utcfromtimestamp(int(start)/1000))
+    local_start_date = start_date.astimezone(seattle_time).replace(tzinfo=None)
+
+    end_date = pytz.utc.localize(datetime.utcfromtimestamp(int(end)/1000))
+    local_end_date = end_date.astimezone(seattle_time).replace(tzinfo=None)
+
     # call crime data api
     client = Socrata(settings.SOURCE_DOMAIN, settings.SOCRATA_APP_TOKEN)
 
-    limit = 1000
+    limit = 2000
     offset = 0
-    tries = 1
+    tries = 10
 
     # return the headers
     yield ['count', 'date', 'event_clearance_group']
@@ -60,9 +68,15 @@ def get_grouped_crime_data():
             settings.DATASET_ID,
             content_type="csv",
             select='date_trunc_ymd(event_clearance_date) as date, event_clearance_group, count(*)',
-            where='event_clearance_date is not null and \
-                    within_circle(incident_location, {0}, {1}, {2})'.format(
-                        settings.CLINK_LAT, settings.CLINK_LON, settings.RADIUS),
+            where='event_clearance_date is not null \
+                    and event_clearance_date >= \'{0}\' \
+                    and event_clearance_date <= \'{1}\' \
+                    and within_circle(incident_location, {2}, {3}, {4})'.format(
+                        local_start_date.isoformat().split('+')[0],
+                        local_end_date.isoformat().split('+')[0],
+                        settings.CLINK_LAT,
+                        settings.CLINK_LON,
+                        settings.RADIUS),
             group='date, event_clearance_group',
             order='date DESC, count DESC',
             limit=limit,

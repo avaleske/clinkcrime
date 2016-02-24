@@ -15,12 +15,12 @@ def get_all_crime(request):
     return response
 
 @cache_page(60 * 15)
-def get_grouped_crime(request):
+def get_grouped_crime(request, start, end):
     response = HttpResponse(content_type='text/csv')
     response['content-Disposition'] = 'attachment; filename="grouped_crime.csv"'
 
     # these could blow up, but that'll just return a 500, which is good for now
     writer = csv.writer(response)
-    writer.writerows(api.get_grouped_crime_data())
+    writer.writerows(api.get_grouped_crime_data(start, end))
 
     return response
