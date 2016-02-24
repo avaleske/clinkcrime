@@ -1,0 +1,145 @@
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: 20px auto;
+}
+
+h1 {
+  font-family: "Ubuntu", Helvetica, Arial, sans-serif;
+  font-size: 45px;
+  text-align: center;
+  padding: 15px;
+  margin: 0px;
+}
+
+.question {
+  padding: 15px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.alert-info {
+  color: #31708f;
+  background-color: #d9edf7;
+  border: 1px solid;
+  border-color: #bce8f1;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  font-family: "Nobile", Helvetica, Arial, sans-serif;
+}
+
+.line-through {
+  text-decoration: line-through;
+}
+
+.wrapper {
+  width: 960px;
+  margin: 0 auto;
+}
+
+.main-col, .legend-wrapper {
+  float: left;
+  padding: 0;
+  margin: 0;
+}
+
+.legend-wrapper {
+  width: 240px;
+  margin: 100px 0 0 auto;
+}
+
+.main-col {
+  width: 720px
+}
+
+#throbber {
+  position: absolute;;;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/static/img/BrandedSpinner.gif');
+  background-position: 50% 40%;
+  background-repeat: no-repeat;
+  z-index: 100;
+}
+
+/*legend*/
+
+.legend {
+  font-size: 10px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 240px;
+}
+
+.legend-item {
+  margin: 5px 0;
+  padding: 0;
+}
+
+.legend-label, .legend-color, .legend-count {
+  vertical-align: middle;
+}
+
+.legend-label {
+  width: 170px;
+  text-align: right;
+  display: inline-block;
+  text-transform: capitalize;
+}
+
+.legend-color {
+  width: 15px;
+  height: 15px;
+  margin: 0 5px;
+  display: inline-block;
+}
+
+.legend-count {
+  width: 30px;
+  text-align: left;
+}
+
+/*buttons*/
+.start .end {
+  display:block;
+  float:left;
+}
+
+.start-buttons {
+  float: left;
+  width: 200px;
+}
+
+.end-buttons {
+  float: right;
+  width: 200px;
+}
+
+.end {
+  float:right;
+}
+
+/*svg things*/
+
+text {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.event-rect {
+  fill: #000;
+  opacity: 0.2;
+}
