@@ -1,6 +1,13 @@
 var x_domain = [];
 
 $(document).ready(function(event) {
+  $('.error').hide();
+
+  error_func = function(){
+    $('.error').show();
+    $('#throbber').hide();
+  };
+
   // initial x domain
   var now = new Date();
   x_domain = [
@@ -9,6 +16,7 @@ $(document).ready(function(event) {
   $(this).trigger('draw');
 });
 
+// button click handlers
 $('.start.back').click(function(event) {
   var start = new Date(x_domain[0]);
   x_domain[0] = new Date(start.getFullYear(), start.getMonth() - 1, 1).getTime();
@@ -41,6 +49,7 @@ $('.end.forward').click(function(event) {
   $(document).trigger('draw');
 });
 
+// and the magic
 $(document).on('draw', function(event) {
   // I'm not proud of this
   // but I don't have time to refactor this so I can
@@ -72,11 +81,8 @@ $(document).on('draw', function(event) {
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   // get crime data
-  d3.csv('/api/grouped_crime/start/' + x_domain[0] + '/end/' + x_domain[1],
-    type,
-    function(error, crime_csv){
-
-    if (error) throw error // todo: handle a server error
+  d3.csv('/api/grouped_crime/start/' + x_domain[0] + '/end/' + x_domain[1], type, function(error, crime_csv){
+    if (error) {error_func();};
 
     // group data by days
     var data = d3.nest()
@@ -216,7 +222,7 @@ $(document).on('draw', function(event) {
     // get event data and process it
     // todo refactor so stuff isn't nesting forever
     d3.csv('/api/all_events', event_type, function(error, event_csv){
-      if (error) throw error;
+      if (error) {error_func();};
 
       event_data = event_csv.filter(function(d) {
         return d.location != 'CenturyLink Field Event Center'
