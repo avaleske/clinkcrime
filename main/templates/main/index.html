@@ -80,7 +80,10 @@
         Do events at CenturyLink Field raise crime nearby?
       </div>
       <div class="alert-info">
-        <em>Hey there!</em> This is very much a demo app, and could still use <span class="line-through">a bit</span> a lot of polish.
+        <em>Hey there!</em> <br>
+        This is very much a demo app, and could still use <span class="line-through">a bit</span> a lot of polish.
+        For a list of known issues, including colorblind friendliness and responsiveness,
+        checkout out the Readme on <a href="//github.com/avaleske/clinkcrime">GitHub</a>.
       </div>
 
       <div class="chart"></div>
@@ -144,13 +147,13 @@
           // get unique crime types
           var crime_catagories = d3.keys(d3.map(crime_csv, function(d) {
                                             return d.event_clearance_group;
-                                          })._).sort();
+                                          })._).sort().reverse();
 
           // get colors
-          var color = d3.scale.linear()
+          var color = d3.scale.ordinal()
             //.domain([0, 36])
-            .domain([0, crime_catagories.length - 1])
-            .range(["#98abc5", "#ff8c00"]);
+            .domain(crime_catagories)
+            .range(color_scale);
 
             // add stack info. todo: combine this with the rollup function above
             data.forEach(function(d) {
@@ -225,11 +228,11 @@
               .attr("width", width/data.length )
               .attr("y", function(d) { return y(d.y1); })
               .attr("height", function(d) { return y(d.y0) - y(d.y1); })
-              .style("fill", function(d) { return color(crime_catagories.indexOf(d.catagory)); });
+              .style("fill", function(d) { return color(d.catagory); });
 
           // for the legend
           var legend = legend_svg.selectAll(".legend-item")
-              .data(crime_catagories)
+              .data(crime_catagories.slice().reverse())
             .enter().append("g")
               .attr("class", "legend-item")
               .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
@@ -238,7 +241,7 @@
               .attr("x", legend_width - 18)
               .attr("width", 18)
               .attr("height", 18)
-              .style("fill", function(d) { return color(crime_catagories.indexOf(d)); });
+              .style("fill", function(d) { return color(d); });
 
           legend.append("text")
               .attr("x", legend_width - 24)
@@ -254,7 +257,7 @@
 
             event_data = event_csv.filter(function(d) {
               return d.location != 'CenturyLink Field Event Center'
-                && d.event_datetime > new Date(1450569600000);
+                && d.event_datetime >= x_domain[0];
             });
             event_data.sort(function(a,b){ return a.event_datetime - b.event_datetime; });
 
@@ -271,8 +274,6 @@
 
           var extra = 5;
         });
-
-
 
         function type(d) {
           d.key = (new Date(+d.date)).toLocaleDateString();
@@ -291,6 +292,47 @@
           d.location = d.location;
           return d;
         }
+
+        color_scale = [
+          '#8c6d31',
+          '#1f77b4',
+          '#f7b6d2',
+          '#aec7e8',
+          '#ff7f0e',
+          '#ffbb78',
+          '#2ca02c',
+          '#98df8a',
+          '#d62728',
+          '#ff9896',
+          '#9467bd',
+          '#2ca02c',
+          '#c5b0d5',
+          '#8c564b',
+          'bcbd22',
+          '#c49c94',
+          '#e377c2',
+          '#06332c',
+          '#7f7f7f',
+          '#c7c7c7',
+          '#bcbd22',
+          '#f1bdc2',
+          '#dbfb8d',
+          '#17becf',
+          '#9edae5',
+          '#e7cb94',
+          '#843c39',
+          '#ff7f0e',
+          '#87badf',
+          '#e377c2',
+          '#7f7f7f',
+          '#637939',
+          '#6baed6',
+          '#393b79',
+          '#e7ba52',
+          '#969696',
+          '#ce6dbd'
+        ];
+
       });
     </script>
   </body>
