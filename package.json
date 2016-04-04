@@ -1,0 +1,24 @@
+{
+  "name": "clinkcrime",
+  "version": "1.0.0",
+  "description": "A thing to see crime around the clink.",
+  "main": "manage.py",
+  "scripts": {
+    "test": "manage.py test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avaleske/clinkcrime.git"
+  },
+  "keywords": [
+    "d3",
+    "crime",
+    "socrata"
+  ],
+  "author": "Austin Valeske",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/avaleske/clinkcrime/issues"
+  },
+  "homepage": "https://github.com/avaleske/clinkcrime#readme"
+}
